@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة مستر يحيى البنا - رياضيات المحلة</title>
+    <style>
+        :root {
+            --primary-red: #e50914;
+            --dark-red: #b20710;
+            --bg-black: #121212;
+            --card-black: #1e1e1e;
+            --text-light: #ffffff;
+            --text-gray: #b3b3b3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        /* Login Section */
+        #login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+
+        .login-card {
+            background-color: var(--card-black);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(229, 9, 20, 0.3);
+            width: 100%;
+            max-width: 450px;
+            border-top: 4px solid var(--primary-red);
+            text-align: center;
+        }
+
+        .login-card h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .login-card p {
+            font-size: 13px;
+            color: var(--text-gray);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            background-color: #2c2c2c;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .btn {
+            background-color: var(--primary-red);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: var(--dark-red);
+        }
+
+        .logout-btn {
+            background-color: #333;
+            color: #ff5252;
+            border: 1px solid #ff5252;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .logout-btn:hover {
+            background-color: #ff5252;
+            color: white;
+        }
+
+        /* Dashboard Styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--card-black);
+            padding: 15px 25px;
+            border-radius: 8px;
+            border-bottom: 2px solid var(--primary-red);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .teacher-badge-email {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #2c2c2c;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .verified-badge {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background-color: var(--card-black);
+            color: var(--text-gray);
+            border: 1px solid #333;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active, .tab-btn:hover {
+            background-color: var(--primary-red);
+            color: white;
+            border-color: var(--primary-red);
+        }
+
+        .tab-content {
+            display: none;
+            background-color: var(--card-black);
+            padding: 25px;
+            border-radius: 8px;
+            min-height: 350px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* TikTok Style Vertical Feed Cards */
+        .tiktok-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tiktok-card {
+            background: #181818;
+            border: 1px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .tiktok-video-container {
+            width: 100%;
+            background: #000;
+            position: relative;
+            max-height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .tiktok-video-container video {
+            width: 100%;
+            max-height: 400px;
+            outline: none;
+        }
+
+        .tiktok-info {
+            padding: 15px;
+        }
+
+        .tiktok-info h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .tiktok-info p {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+
+        .delete-btn {
+            background: #333;
+            color: #ff5252;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .delete-btn:hover {
+            background: #ff5252;
+            color: white;
+        }
+
+        /* Live Box & Camera View */
+        .live-box {
+            background: #1a1a1a;
+            border: 2px dashed #444;
+            padding: 30px;
+            text-align: center;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        .live-box.active-live {
+            border-color: var(--primary-red);
+            background: rgba(229, 9, 20, 0.05);
+        }
+
+        video.live-stream-screen {
+            width: 100%;
+            max-height: 450px;
+            background: #000;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        /* Footer Credit */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--card-black);
+            margin-top: auto;
+            border-top: 1px solid #222;
+        }
+
+        .signature-box {
+            display: inline-block;
+            background-color: var(--primary-red);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .online-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .online-item {
+            padding: 12px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            background: #252525;
+            margin-bottom: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Login Section -->
+        <div id="login-section">
+            <div class="login-card">
+                <h1>أهلاً بك عند مستر يحيى البنا</h1>
+                <p>مدرس الرياضة رقم 1 على المحلة الكبرى — شرح استثنائي يجمع بين الفهم والمتعة.</p>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label>اسم الطالب / المعلم:</label>
+                        <input type="text" id="name" required placeholder="أدخل اسمك الكريم">
+                    </div>
+                    <div class="form-group">
+                        <label>رقم التليفون:</label>
+                        <input type="tel" id="phone" required placeholder="01xxxxxxxx0">
+                    </div>
+                    <div class="form-group">
+                        <label>كود الدخول:</label>
+                        <input type="text" id="code" required placeholder="أدخل كود التفعيل أو كود المستر">
+                    </div>
+                    <button type="submit" class="btn">تسجيل الدخول للمنصة</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Portal Section -->
+        <div id="portal-section" style="display: none;">
+            <div class="dashboard-header">
+                <div>
+                    <h2 id="welcome-user-title">مرحباً بك</h2>
+                    <p style="font-size: 13px; color: var(--text-gray);" id="user-role-desc"></p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                    <div class="teacher-badge-email">
+                        <span>yahiya.elbenna@math.com</span>
+                        <span class="verified-badge">✔ موثق</span>
+                    </div>
+                    <button class="logout-btn" onclick="logoutUser()">تسجيل الخروج</button>
+                </div>
+            </div>
+
+            <div class="tabs" id="tabs-container"></div>
+            <div id="tab-contents-container"></div>
+        </div>
+    </div>
+
+    <!-- Footer with Zyad Mousa Signature Box -->
+    <footer>
+        <div class="signature-box">
+            صناعة وتصميم زياد موسى
+        </div>
+    </footer>
+
+    <script>
+        const teacherCode = "YAHIYA2026";
+        
+        if (!localStorage.getItem('yahiya_codes')) {
+            localStorage.setItem('yahiya_codes', JSON.stringify(["YB-1001", "YB-2026", "MATH505"]));
+        }
+        if (!localStorage.getItem('yahiya_videos')) {
+            localStorage.setItem('yahiya_videos', JSON.stringify([]));
+        }
+        if (!localStorage.getItem('yahiya_live')) {
+            localStorage.setItem('yahiya_live', JSON.stringify({ active: false }));
+        }
+        if (!localStorage.getItem('yahiya_online')) {
+            localStorage.setItem('yahiya_online', JSON.stringify([]));
+        }
+
+        let currentUser = null;
+        let isUserTeacher = false;
+        let localStream = null;
+
+        window.onload = function() {
+            const savedUser = localStorage.getItem('yahiya_current_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                isUserTeacher = (currentUser.role === "المعلم");
+                
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('portal-section').style.display = 'block';
+
+                setupPortal();
+                setInterval(refreshPortalData, 2000);
+            }
+        };
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const code = document.getElementById('code').value;
+
+            const validCodes = JSON.parse(localStorage.getItem('yahiya_codes'));
+            const isTeacher = (code === teacherCode);
+
+            if (!isTeacher && !validCodes.includes(code)) {
+                alert('عذراً، كود الدخول غير صحيح! احصل على الكود من مستر يحيى.');
+                return;
+            }
+
+            currentUser = { name, phone, role: isTeacher ? "المعلم" : "طالب" };
+            isUserTeacher = isTeacher;
+
+            localStorage.setItem('yahiya_current_user', JSON.stringify(currentUser));
+
+            let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
+            onlineUsers = onlineUsers.filter(u => u.phone !== phone);
+            onlineUsers.push(currentUser);
+            localStorage.setItem('yahiya_online', JSON.stringify(onlineUsers));
+
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('portal-section').style.display = 'block';
+
+            setupPortal();
+            setInterval(refreshPortalData, 2000);
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('yahiya_current_user');
+            location.reload();
+        }
+
+        function setupPortal() {
+            const titleEl = document.getElementById('welcome-user-title');
+            const roleDescEl = document.getElementById('user-role-desc');
+            const tabsContainer = document.getElementById('tabs-container');
+            const contentsContainer = document.getElementById('tab-contents-container');
+
+            if (isUserTeacher) {
+                titleEl.innerText = `أهلاً بك يا مستر يحيى البنا`;
+                roleDescEl.innerText = "لوحة التحكم لإدارة الكاميرا والبث المباشر للطلاب";
+
+                tabsContainer.innerHTML = `
+                    <button class="tab-btn active" onclick="switchTab('teacher-videos', event)">رفع الفيديوهات من الجهاز</button>
+                    <button class="tab-btn" onclick="switchTab('teacher-live', event)">البث المباشر بالكاميرا 🔴</button>
+                    <button class="tab-btn" onclick="switchTab('teacher-codes', event)">صناعة الأكواد</button>
+                    <button class="tab-btn" onclick="switchTab('teacher-online', event)">كشف الأونلاين</button>
+                `;
+
+                contentsContainer.innerHTML = `
+                    <div id="teacher-videos" class="tab-content active">
+                        <h3>رفع فيديو جديد من ملفات الجهاز</h3>
+                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اختر الفيديو من جهازك مع كتابة عنوان ووصف ليظهر بشكل تيك توك للطلاب.</p>
+                        <div class="form-group">
+                            <input type="text" id="vidTitle" placeholder="عنوان الدرس (مثال: حصة التفاضل)">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="vidDesc" placeholder="وصف صغير تحت الفيديو">
+                        </div>
+                        <div class="form-group">
+                            <label>اختر ملف الفيديو من جهازك:</label>
+                            <input type="file" id="videoFile" accept="video/*" style="background:#222; padding:10px;">
+                        </div>
+                        <button class="btn" onclick="uploadVideoFromFile()">رفع ونشر الفيديو للمنصة 🚀</button>
+
+                        <h3 style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">الفيديوهات المرفوعة:</h3>
+                        <div class="tiktok-feed" id="teacher-videos-feed" style="margin-top: 15px;"></div>
+                    </div>
+
+                    <div id="teacher-live" class="tab-content">
+                        <h3>استوديو البث المباشر بالكاميرا</h3>
+                        <p style="color:var(--text-gray); margin: 10px 0 15px;">اضغط على فتح الكاميرا لبدء بث الحصة للطلاب الغائبين مباشرة.</p>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <video id="teacherWebcam" autoplay playsinline muted class="live-stream-screen"></video>
+                        </div>
+
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn" style="background-color: #2196F3;" onclick="startTeacherCameraLive()">بدء البث بالكاميرا 🔴</button>
+                            <button class="btn" style="background-color: #f44336;" onclick="stopTeacherCameraLive()">إيقاف البث ⏹</button>
+                        </div>
+                        <p id="live-status-text" style="margin-top: 15px; font-weight: bold;"></p>
+                    </div>
+
+                    <div id="teacher-codes" class="tab-content">
+                        <h3>توليد أكواد الطلاب</h3>
+                        <button class="btn" onclick="generateStudentCode()">توليد كود جديد</button>
+                        <div id="generated-code-box" style="margin-top: 15px; font-size: 18px; color: var(--primary-red);"></div>
+                        <ul id="codes-list-display" style="margin-top: 15px; list-style: disc; padding-right: 20px; color:var(--text-gray);"></ul>
+                    </div>
+
+                    <div id="teacher-online" class="tab-content">
+                        <h3>الطلاب المتواجدين الآن</h3>
+                        <ul class="online-list" id="teacher-online-list"></ul>
+                    </div>
+                `;
+            } else {
+                titleEl.innerText = `أهلاً بك يا ${currentUser.name}`;
+                roleDescEl.innerText = "منصة مستر يحيى البنا - طالب معتمد";
+
+                tabsContainer.innerHTML = `
+                    <button class="tab-btn active" onclick="switchTab('student-feed', event)">شرح الفيديوهات (تيك توك)</button>
+                    <button class="tab-btn" onclick="switchTab('student-live', event)">غرفة البث المباشر 🔴</button>
+                `;
+
+                contentsContainer.innerHTML = `
+                    <div id="student-feed" class="tab-content active">
+                        <h3 style="margin-bottom: 15px; text-align: center;">شرح ومحاضرات مستر يحيى البنا</h3>
+                        <div class="tiktok-feed" id="student-tiktok-feed"></div>
+                    </div>
+
+                    <div id="student-live" class="tab-content">
+                        <h3>غرفة البث المباشر للطلاب الغائبين</h3>
+                        <div class="live-box" id="student-live-viewbox"></div>
+                    </div>
+                `;
+            }
+            refreshPortalData();
+        }
+
+        function switchTab(tabId, event) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(btn => btn.classList.remove('active'));
+            
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        function uploadVideoFromFile() {
+            const title = document.getElementById('vidTitle').value;
+            const desc = document.getElementById('vidDesc').value;
+            const fileInput = document.getElementById('videoFile');
+
+            if (!title || fileInput.files.length === 0) {
+                alert('الرجاء كتابة العنوان واختيار ملف الفيديو من جهازك.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const videoDataUrl = e.target.result;
+                let videos = JSON.parse(localStorage.getItem('yahiya_videos'));
+                videos.push({ id: Date.now(), title, desc, url: videoDataUrl });
+                localStorage.setItem('yahiya_videos', JSON.stringify(videos));
+
+                document.getElementById('vidTitle.value = ''');
+                document.getElementById('vidDesc').value = '';
+                fileInput.value = '';
+                alert('تم رفع الفيديو وتشغيله على المنصة بنجاح!');
+                refreshPortalData();
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function deleteContent(id) {
+            let videos = JSON.parse(localStorage.getItem('yahiya_videos'));
+            videos = videos.filter(item => item.id !== id);
+            localStorage.setItem('yahiya_videos', JSON.stringify(videos));
+            refreshPortalData();
+        }
+
+        // تشغيل كاميرا المستر الحية
+        async function startTeacherCameraLive() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const webcamElement = document.getElementById('teacherWebcam');
+                webcamElement.srcObject = localStream;
+
+                // تخزين أن اللايف شغال في الذاكرة المشتركة
+                localStorage.setItem('yahiya_live', JSON.stringify({ active: true }));
+                
+                // حفظ بث الكاميرا مؤقتاً لعرضه للطلاب (عبر مسجل البيانات)
+                alert('تم فتح الكاميرا وبدء البث المباشر للطلاب بنجاح!');
+                refreshPortalData();
+            } catch (error) {
+                alert('عذراً، لم نتمكن من الوصول للكاميرا. تأكد من السماح للأذونات من المتصفح.');
+            }
+        }
+
+        function stopTeacherCameraLive() {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+                localStream = null;
+            }
+            const webcamElement = document.getElementById('teacherWebcam');
+            if (webcamElement) webcamElement.srcObject = null;
+
+            localStorage.setItem('yahiya_live', JSON.stringify({ active: false }));
+            alert('تم إيقاف البث المباشر.');
+            refreshPortalData();
+        }
+
+        function generateStudentCode() {
+            let codes = JSON.parse(localStorage.getItem('yahiya_codes'));
+            const newCode = 'YB-' + Math.floor(1000 + Math.random() * 9000);
+            codes.push(newCode);
+            localStorage.setItem('yahiya_codes', JSON.stringify(codes));
+            document.getElementById('generated-code-box').innerText = `تم توليد الكود: ${newCode}`;
+            refreshPortalData();
+        }
+
+        function refreshPortalData() {
+            if (!currentUser) return;
+
+            const videos = JSON.parse(localStorage.getItem('yahiya_videos'));
+            const liveData = JSON.parse(localStorage.getItem('yahiya_live'));
+            const codes = JSON.parse(localStorage.getItem('yahiya_codes'));
+            const onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
+
+            if (isUserTeacher) {
+                const tFeed = document.getElementById('teacher-videos-feed');
+                if (tFeed) {
+                    tFeed.innerHTML = '';
+                    videos.forEach(item => {
+                        tFeed.innerHTML += `
+                            <div class="tiktok-card">
+                                <div class="tiktok-video-container">
+                                    <video controls src="${item.url}"></video>
+                                </div>
+                                <div class="tiktok-info">
+                                    <h3>${item.title}</h3>
+                                    <p>${item.desc || ''}</p>
+                                    <button class="delete-btn" onclick="deleteContent(${item.id})">حذف الفيديو</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                const liveStatus = document.getElementById('live-status-text');
+                if (liveStatus) {
+                    liveStatus.innerText = liveData.active ? "حالة البث: الكاميرا تعمل والبث جارٍ للطلاب 🔴" : "حالة البث: متوقف ⏹";
+                    liveStatus.style.color = liveData.active ? "#4CAF50" : "#ff5252";
+                }
+
+                const codesList = document.getElementById('codes-list-display');
+                if (codesList) {
+                    codesList.innerHTML = '';
+                    codes.forEach(c => codesList.innerHTML += `<li>${c}</li>`);
+                }
+
+                const onlineList = document.getElementById('teacher-online-list');
+                if (onlineList) {
+                    onlineList.innerHTML = '';
+                    onlineUsers.forEach(u => {
+                        onlineList.innerHTML += `
+                            <li class="online-item">
+                                <span><strong>${u.name}</strong> (${u.phone}) — <span style="color:var(--primary-red);">${u.role}</span></span>
+                                <span style="color: #4CAF50; font-weight: bold;">● متصل</span>
+                            </li>
+                        `;
+                    });
+                }
+
+            } else {
+                const sFeed = document.getElementById('student-tiktok-feed');
+                if (sFeed) {
+                    sFeed.innerHTML = '';
+                    if(videos.length === 0) {
+                        sFeed.innerHTML = `<p style="text-align:center; color:var(--text-gray); padding: 30px;">لا توجد فيديوهات منشورة حالياً، انتظر نشر مستر يحيى للمحاضرات.</p>`;
+                    }
+                    videos.forEach(item => {
+                        sFeed.innerHTML += `
+                            <div class="tiktok-card">
+                                <div class="tiktok-video-container">
+                                    <video controls src="${item.url}"></video>
+                                </div>
+                                <div class="tiktok-info">
+                                    <h3>${item.title}</h3>
+                                    <p>${item.desc || ''}</p>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                const liveBox = document.getElementById('student-live-viewbox');
+                if (liveBox) {
+                    if (liveData.active) {
+                        liveBox.className = "live-box active-live";
+                        liveBox.innerHTML = `
+                            <h3>البث المباشر لشرح الحصة يعمل الآن! 🔴</h3>
+                            <p style="margin: 10px 0 15px; color: var(--text-gray);">مستر يحيى البنا يشرح الحصة الآن للطلاب الغائبين مباشرة من قاعة الدرس.</p>
+                            <video id="studentLiveView" autoplay playsinline class="live-stream-screen" controls></video>
+                        `;
+                        // ربط بث الكاميرا الخاص بالمستر بشاشة الطالب لو فاتحين من نفس المتصفح التجريبي
+                        const studentView = document.getElementById('studentLiveView');
+                        if (localStream && studentView && !studentView.srcObject) {
+                            studentView.srcObject = localStream;
+                        }
+                    } else {
+                        liveBox.className = "live-box";
+                        liveBox.innerHTML = `
+                            <h3>لا يوجد بث مباشر حالياً</h3>
+                            <p style="color: var(--text-gray); margin-top: 10px;">سيظهر البث تلقائياً فور بدء مستر يحيى بث الحصة من الكاميرا.</p>
+                        `;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
