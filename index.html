@@ -739,7 +739,6 @@
             }
             document.getElementById(tabId).classList.add('active');
         }
-
         function uploadVideoFromFile() {
             const title = document.getElementById('vidTitle').value;
             const desc = document.getElementById('vidDesc').value;
@@ -751,22 +750,45 @@
             }
 
             const file = fileInput.files[0];
+            
+            // التحقق من حجم الفيديو عشان المتصفح مايهنجش
+            if (file.size > 15 * 1024 * 1024) { 
+                alert('عذراً، حجم الفيديو كبير جداً. حاول اختيار فيديو قصير (أقل من 15 ميجا) لضمان السرعة.');
+                return;
+            }
+
             const reader = new FileReader();
+            
+            // تنبيه يوضح إن الجهاز بيعالج الفيديو عشان زرار النشر ما يحسسكش إنه واقف
+            alert('جاري معالجة ورفع الفيديو، انتظر ثواني قليلة..');
 
             reader.onload = function(e) {
                 const videoDataUrl = e.target.result;
-                let videos = JSON.parse(localStorage.getItem('yahiya_videos'));
-                videos.push({ id: Date.now(), title, desc, url: videoDataUrl });
-                localStorage.setItem('yahiya_videos', JSON.stringify(videos));
+                
+                try {
+                    let videos = JSON.parse(localStorage.getItem('yahiya_videos')) || [];
+                    videos.push({ id: Date.now(), title, desc, url: videoDataUrl });
+                    localStorage.setItem('yahiya_videos', JSON.stringify(videos));
 
-                document.getElementById('vidTitle').value = '';
-                document.getElementById('vidDesc').value = '';
-                fileInput.value = '';
-                alert('تم رفع الفيديو وتشغيله على المنصة بنجاح!');
-                refreshPortalData();
+                    document.getElementById('vidTitle').value = '';
+                    document.getElementById('vidDesc').value = '';
+                    fileInput.value = '';
+                    
+                    alert('تم رفع الفيديو وتشغيله على المنصة بنجاح! 🚀');
+                    refreshPortalData();
+                } catch (err) {
+                    alert('حدث خطأ في مساحة التخزين. مساحة المتصفح ممتلئة، جرب فيديو أصغر.');
+                }
+            };
+
+            reader.onerror = function() {
+                alert('حدث خطأ أثناء قراءة ملف الفيديو، جرب اختيار ملف آخر.');
             };
 
             reader.readAsDataURL(file);
+        }
+
+           
         }
 
         function deleteContent(id) {
