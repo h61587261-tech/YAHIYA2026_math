@@ -287,7 +287,6 @@
             object-fit: cover;
         }
 
-        /* WhatsApp-like Full Screen Chat Styles */
         .chat-layout {
             display: flex;
             flex-direction: column;
@@ -481,7 +480,6 @@
 
         <!-- Portal Section -->
         <div id="portal-section" style="display: none;">
-            <!-- Tab Contents Container -->
             <div id="tab-contents-container"></div>
         </div>
     </div>
@@ -498,7 +496,6 @@
     <script>
         const teacherCode = "YAHIYA2026";
         
-        // LocalStorage Initialization
         if (!localStorage.getItem('yahiya_codes')) {
             localStorage.setItem('yahiya_codes', JSON.stringify([
                 { code: "YB-1001", status: "active" },
@@ -578,7 +575,7 @@
 
             localStorage.setItem('yahiya_current_user', JSON.stringify(currentUser));
 
-            let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
+            let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online')) || [];
             onlineUsers = onlineUsers.filter(u => u.phone !== phone);
             onlineUsers.push(currentUser);
             localStorage.setItem('yahiya_online', JSON.stringify(onlineUsers));
@@ -592,7 +589,7 @@
 
         function logoutUser() {
             if (currentUser) {
-                let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
+                let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online')) || [];
                 onlineUsers = onlineUsers.filter(u => u.phone !== currentUser.phone);
                 localStorage.setItem('yahiya_online', JSON.stringify(onlineUsers));
             }
@@ -615,8 +612,8 @@
 
                 contentsContainer.innerHTML = `
                     <div id="teacher-videos" class="tab-content active">
-                        <h3>نشر الفيديوهات والحصص للمنصة</h3>
-                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اكتب عنوان الدرس ووصفه، ثم حط رابط الفيديو المباشر (مثل روابط تيليجرام أو روابط مباشرة) ليظهر للطلاب مع زر تكبير الشاشة.</p>
+                        <h3>رفع الفيديوهات التعليمية والحصص للمنصة</h3>
+                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اكتب العنوان ووصف الفيديو، ثم حط رابط الفيديو (مثل تيليجرام أو رابط مباشر) ليظهر للطلاب مع زر تكبير الشاشة.</p>
                         <div class="form-group">
                             <input type="text" id="vidTitle" placeholder="عنوان الدرس (مثال: حصة التفاضل)">
                         </div>
@@ -627,7 +624,7 @@
                             <label>رابط الفيديو المباشر (تيليجرام أو رابط مباشر):</label>
                             <input type="text" id="videoUrlInput" placeholder="https://..." style="background:#222; padding:12px;">
                         </div>
-                        <button class="btn" onclick="uploadVideoFromFile()">نشر الفيديو للمنصة 🚀</button>
+                        <button class="btn" onclick="uploadVideoFromFile()">رفع ونشر الفيديو للمنصة 🚀</button>
 
                         <h3 style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">الفيديوهات المرفوعة:</h3>
                         <div class="video-feed" id="teacher-videos-feed" style="margin-top: 15px;"></div>
@@ -696,7 +693,10 @@
                     </div>
 
                     <div id="teacher-online" class="tab-content">
-                        <h3>الطلاب المتواجدين الآن على المنصة</h3>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0;">الطلاب المتواجدين الآن على المنصة</h3>
+                            <button class="logout-btn" style="color: #4CAF50; border-color: #4CAF50; padding: 8px 14px;" onclick="refreshOnlineListManually()">تحديث القائمة 🔄</button>
+                        </div>
                         <ul class="online-list" id="teacher-online-list"></ul>
                     </div>
                 `;
@@ -775,12 +775,12 @@
             document.getElementById('vidDesc').value = '';
             document.getElementById('videoUrlInput').value = '';
             
-            alert('تم نشر الفيديو على المنصة بنجاح لجميع الطلاب! 🚀');
+            alert('تم رفع الفيديو على المنصة بنجاح لجميع الطلاب! 🚀');
             refreshPortalData();
         }
 
         function deleteContent(id) {
-            let videos = JSON.parse(localStorage.getItem('yahiya_videos'));
+            let videos = JSON.parse(localStorage.getItem('yahiya_videos')) || [];
             videos = videos.filter(item => item.id !== id);
             localStorage.setItem('yahiya_videos', JSON.stringify(videos));
             refreshPortalData();
@@ -797,6 +797,11 @@
             }
         }
 
+        function refreshOnlineListManually() {
+            refreshPortalData();
+            alert('تم تحديث قائمة الطلاب المتواجدين بنجاح!');
+        }
+
         function toggleLiveTargetSelection() {
             const type = document.getElementById('liveTypeSelect').value;
             const container = document.getElementById('privateLiveStudentsContainer');
@@ -809,14 +814,16 @@
         }
 
         function populateStudentsCheckboxList() {
-            const onlineUsers = JSON.parse(localStorage.getItem('yahiya_online')).filter(u => u.role !== "المعلم");
+            const onlineUsers = JSON.parse(localStorage.getItem('yahiya_online')) || [];
+            const filteredUsers = onlineUsers.filter(u => u.role !== "المعلم");
             const listEl = document.getElementById('studentsCheckboxList');
+            if(!listEl) return;
             listEl.innerHTML = '';
-            if(onlineUsers.length === 0) {
+            if(filteredUsers.length === 0) {
                 listEl.innerHTML = '<p style="color:var(--text-gray); font-size:13px;">لا يوجد طلاب متواجدين حالياً.</p>';
                 return;
             }
-            onlineUsers.forEach(u => {
+            filteredUsers.forEach(u => {
                 listEl.innerHTML += `
                     <label style="display:block; color:#fff; font-size:13px; margin-bottom:5px; cursor:pointer;">
                         <input type="checkbox" value="${u.phone}" class="live-target-checkbox"> ${u.name} (${u.phone})
@@ -864,7 +871,7 @@
         }
 
         function generateStudentCode() {
-            let codes = JSON.parse(localStorage.getItem('yahiya_codes'));
+            let codes = JSON.parse(localStorage.getItem('yahiya_codes')) || [];
             const newCode = 'YB-' + Math.floor(1000 + Math.random() * 9000);
             codes.push({ code: newCode, status: "active" });
             localStorage.setItem('yahiya_codes', JSON.stringify(codes));
@@ -873,7 +880,7 @@
         }
 
         function updateCodeStatus(codeVal, action) {
-            let codes = JSON.parse(localStorage.getItem('yahiya_codes'));
+            let codes = JSON.parse(localStorage.getItem('yahiya_codes')) || [];
             codes = codes.map(c => {
                 if (c.code === codeVal) {
                     if (action === 'active') c.status = 'active';
@@ -887,8 +894,8 @@
         }
 
         function banStudentByPhone(studentPhone) {
-            let codes = JSON.parse(localStorage.getItem('yahiya_codes'));
-            let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
+            let codes = JSON.parse(localStorage.getItem('yahiya_codes')) || [];
+            let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online')) || [];
             const targetUser = onlineUsers.find(u => u.phone === studentPhone);
             if (targetUser) {
                 codes = codes.map(c => {
@@ -948,13 +955,13 @@
             const text = input.value.trim();
             if (!text) return;
 
-            const chatSettings = JSON.parse(localStorage.getItem('yahiya_chat_settings'));
+            const chatSettings = JSON.parse(localStorage.getItem('yahiya_chat_settings')) || { groupChatEnabled: true };
             if (!isUserTeacher && activeChatTarget === 'group' && !chatSettings.groupChatEnabled) {
                 alert('الشات الجماعي مغلق حالياً كتابةً من قبل المعلم.');
                 return;
             }
 
-            let messages = JSON.parse(localStorage.getItem('yahiya_messages'));
+            let messages = JSON.parse(localStorage.getItem('yahiya_messages')) || [];
             let recipient = activeChatTarget;
             if (!isUserTeacher && activeChatTarget === 'teacher') {
                 recipient = 'teacher_phone_special'; 
@@ -977,7 +984,7 @@
             const box = document.getElementById('chatMessagesBox');
             if (!box) return;
 
-            const messages = JSON.parse(localStorage.getItem('yahiya_messages'));
+            const messages = JSON.parse(localStorage.getItem('yahiya_messages')) || [];
             box.innerHTML = '';
 
             let filtered = [];
@@ -1020,7 +1027,7 @@
         function refreshPortalData() {
             if (!currentUser) return;
 
-            const codes = JSON.parse(localStorage.getItem('yahiya_codes'));
+            const codes = JSON.parse(localStorage.getItem('yahiya_codes')) || [];
             if (!isUserTeacher) {
                 const myCodeObj = codes.find(c => c.code === currentUser.codeUsed);
                 if (myCodeObj && (myCodeObj.status === 'banned' || myCodeObj.status === 'suspended')) {
@@ -1030,10 +1037,10 @@
                 }
             }
 
-            const videos = JSON.parse(localStorage.getItem('yahiya_videos'));
-            const liveData = JSON.parse(localStorage.getItem('yahiya_live'));
-            const onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
-            const chatSettings = JSON.parse(localStorage.getItem('yahiya_chat_settings'));
+            const videos = JSON.parse(localStorage.getItem('yahiya_videos')) || [];
+            const liveData = JSON.parse(localStorage.getItem('yahiya_live')) || { active: false };
+            const onlineUsers = JSON.parse(localStorage.getItem('yahiya_online')) || [];
+            const chatSettings = JSON.parse(localStorage.getItem('yahiya_chat_settings')) || { groupChatEnabled: true };
 
             if (isUserTeacher) {
                 const tFeed = document.getElementById('teacher-videos-feed');
