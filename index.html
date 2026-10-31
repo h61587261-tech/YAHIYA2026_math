@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة مستر يحيى البنا - رياضيات المحلة</title>
     <!-- مكتبات الفايربيز -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
         :root {
@@ -612,8 +612,8 @@
 
                 contentsContainer.innerHTML = `
                     <div id="teacher-videos" class="tab-content active">
-                        <h3>رفع الفيديوهات التعليمية والحصص للمنصة</h3>
-                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اكتب العنوان ووصف الفيديو، ثم حط رابط الفيديو (مثل تيليجرام أو رابط مباشر) ليظهر للطلاب مع زر تكبير الشاشة.</p>
+                        <h3>نشر الفيديوهات والحصص للمنصة</h3>
+                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اكتب عنوان الدرس ووصفه، ثم حط رابط الفيديو المباشر (مثل روابط تيليجرام أو روابط مباشرة) ليظهر للطلاب مع زر تكبير الشاشة.</p>
                         <div class="form-group">
                             <input type="text" id="vidTitle" placeholder="عنوان الدرس (مثال: حصة التفاضل)">
                         </div>
@@ -624,7 +624,7 @@
                             <label>رابط الفيديو المباشر (تيليجرام أو رابط مباشر):</label>
                             <input type="text" id="videoUrlInput" placeholder="https://..." style="background:#222; padding:12px;">
                         </div>
-                        <button class="btn" onclick="uploadVideoFromFile()">رفع ونشر الفيديو للمنصة 🚀</button>
+                        <button class="btn" onclick="uploadVideoFromFile()">نشر الفيديو للمنصة 🚀</button>
 
                         <h3 style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">الفيديوهات المرفوعة:</h3>
                         <div class="video-feed" id="teacher-videos-feed" style="margin-top: 15px;"></div>
@@ -775,7 +775,7 @@
             document.getElementById('vidDesc').value = '';
             document.getElementById('videoUrlInput').value = '';
             
-            alert('تم رفع الفيديو على المنصة بنجاح لجميع الطلاب! 🚀');
+            alert('تم نشر الفيديو على المنصة بنجاح لجميع الطلاب! 🚀');
             refreshPortalData();
         }
 
@@ -1089,14 +1089,18 @@
                 const onlineList = document.getElementById('teacher-online-list');
                 if (onlineList) {
                     onlineList.innerHTML = '';
-                    onlineUsers.forEach(u => {
-                        onlineList.innerHTML += `
-                            <li class="online-item">
-                                <span><strong>${u.name}</strong> ${u.role==='المعلم'?'<span class="verified-badge">✔</span>':''} (${u.phone})</span>
-                                ${u.role !== 'المعلم' ? `<button class="logout-btn" onclick="banStudentByPhone('${u.phone}')">طرد الطالب ⛔</button>` : '<span style="color: #4CAF50; font-weight: bold;">● متصل</span>'}
-                            </li>
-                        `;
-                    });
+                    if (onlineUsers.length === 0) {
+                        onlineList.innerHTML = '<p style="text-align:center; color:var(--text-gray); padding:20px;">لا توجد طلاب متواجدين الآن..</p>';
+                    } else {
+                        onlineUsers.forEach(u => {
+                            onlineList.innerHTML += `
+                                <li class="online-item">
+                                    <span><strong>${u.name}</strong> ${u.role==='المعلم'?'<span class="verified-badge">✔</span>':''} (${u.phone})</span>
+                                    ${u.role !== 'المعلم' ? `<button class="logout-btn" onclick="banStudentByPhone('${u.phone}')">طرد الطالب ⛔</button>` : '<span style="color: #4CAF50; font-weight: bold;">● متصل</span>'}
+                                </li>
+                            `;
+                        });
+                    }
                 }
 
                 const toggleEl = document.getElementById('groupChatToggle');
