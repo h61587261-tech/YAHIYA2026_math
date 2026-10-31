@@ -249,6 +249,23 @@
             color: white;
         }
 
+        .fullscreen-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-top: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .fullscreen-btn:hover {
+            background: #0b7dda;
+        }
+
         .live-box {
             background: #1a1a1a;
             border: 2px dashed #444;
@@ -278,7 +295,7 @@
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #333;
-            height: 75vh; /* شاشة كاملة وواسعة للشات تشبه الواتساب */
+            height: 75vh;
         }
 
         .chat-sidebar-whatsapp {
@@ -514,7 +531,7 @@
         let currentUser = null;
         let isUserTeacher = false;
         let localStream = null;
-        let activeChatTarget = 'group'; // 'group' or student phone / teacher phone
+        let activeChatTarget = 'group';
 
         window.onload = function() {
             const savedUser = JSON.parse(localStorage.getItem('yahiya_current_user'));
@@ -598,8 +615,8 @@
 
                 contentsContainer.innerHTML = `
                     <div id="teacher-videos" class="tab-content active">
-                        <h3>رفع الفيديوهات التعليمية للمنصة</h3>
-                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اختر الفيديو من جهازك مع كتابة عنوان ووصف ليظهر للطلاب.</p>
+                        <h3>نشر الفيديوهات والحصص للمنصة</h3>
+                        <p style="color:var(--text-gray); margin: 10px 0 20px;">اكتب عنوان الدرس ووصفه، ثم حط رابط الفيديو المباشر (مثل روابط تيليجرام أو روابط مباشرة) ليظهر للطلاب مع زر تكبير الشاشة.</p>
                         <div class="form-group">
                             <input type="text" id="vidTitle" placeholder="عنوان الدرس (مثال: حصة التفاضل)">
                         </div>
@@ -607,10 +624,10 @@
                             <input type="text" id="vidDesc" placeholder="وصف صغير تحت الفيديو">
                         </div>
                         <div class="form-group">
-                            <label>اختر ملف الفيديو من جهازك:</label>
-                            <input type="file" id="videoFile" accept="video/*" style="background:#222; padding:10px;">
+                            <label>رابط الفيديو المباشر (تيليجرام أو رابط مباشر):</label>
+                            <input type="text" id="videoUrlInput" placeholder="https://..." style="background:#222; padding:12px;">
                         </div>
-                        <button class="btn" onclick="uploadVideoFromFile()">رفع ونشر الفيديو للمنصة 🚀</button>
+                        <button class="btn" onclick="uploadVideoFromFile()">نشر الفيديو للمنصة 🚀</button>
 
                         <h3 style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">الفيديوهات المرفوعة:</h3>
                         <div class="video-feed" id="teacher-videos-feed" style="margin-top: 15px;"></div>
@@ -739,56 +756,27 @@
             }
             document.getElementById(tabId).classList.add('active');
         }
+
         function uploadVideoFromFile() {
             const title = document.getElementById('vidTitle').value;
             const desc = document.getElementById('vidDesc').value;
-            const fileInput = document.getElementById('videoFile');
+            const urlInput = document.getElementById('videoUrlInput').value.trim();
 
-            if (!title || fileInput.files.length === 0) {
-                alert('الرجاء كتابة العنوان واختيار ملف الفيديو من جهازك.');
+            if (!title || !urlInput) {
+                alert('الرجاء كتابة العنوان ووضع رابط الفيديو المباشر.');
                 return;
             }
 
-            const file = fileInput.files[0];
+            let videos = JSON.parse(localStorage.getItem('yahiya_videos')) || [];
+            videos.push({ id: Date.now(), title, desc, url: urlInput });
+            localStorage.setItem('yahiya_videos', JSON.stringify(videos));
+
+            document.getElementById('vidTitle').value = '';
+            document.getElementById('vidDesc').value = '';
+            document.getElementById('videoUrlInput').value = '';
             
-            // التحقق من حجم الفيديو عشان المتصفح مايهنجش
-            if (file.size > 15 * 1024 * 1024) { 
-                alert('عذراً، حجم الفيديو كبير جداً. حاول اختيار فيديو قصير (أقل من 15 ميجا) لضمان السرعة.');
-                return;
-            }
-
-            const reader = new FileReader();
-            
-            // تنبيه يوضح إن الجهاز بيعالج الفيديو عشان زرار النشر ما يحسسكش إنه واقف
-            alert('جاري معالجة ورفع الفيديو، انتظر ثواني قليلة..');
-
-            reader.onload = function(e) {
-                const videoDataUrl = e.target.result;
-                
-                try {
-                    let videos = JSON.parse(localStorage.getItem('yahiya_videos')) || [];
-                    videos.push({ id: Date.now(), title, desc, url: videoDataUrl });
-                    localStorage.setItem('yahiya_videos', JSON.stringify(videos));
-
-                    document.getElementById('vidTitle').value = '';
-                    document.getElementById('vidDesc').value = '';
-                    fileInput.value = '';
-                    
-                    alert('تم رفع الفيديو وتشغيله على المنصة بنجاح! 🚀');
-                    refreshPortalData();
-                } catch (err) {
-                    alert('حدث خطأ في مساحة التخزين. مساحة المتصفح ممتلئة، جرب فيديو أصغر.');
-                }
-            };
-
-            reader.onerror = function() {
-                alert('حدث خطأ أثناء قراءة ملف الفيديو، جرب اختيار ملف آخر.');
-            };
-
-            reader.readAsDataURL(file);
-        }
-
-           
+            alert('تم نشر الفيديو على المنصة بنجاح لجميع الطلاب! 🚀');
+            refreshPortalData();
         }
 
         function deleteContent(id) {
@@ -796,6 +784,17 @@
             videos = videos.filter(item => item.id !== id);
             localStorage.setItem('yahiya_videos', JSON.stringify(videos));
             refreshPortalData();
+        }
+
+        function toggleFullscreen(videoId) {
+            const videoEl = document.getElementById(videoId);
+            if (videoEl.requestFullscreen) {
+                videoEl.requestFullscreen();
+            } else if (videoEl.webkitRequestFullscreen) {
+                videoEl.webkitRequestFullscreen();
+            } else if (videoEl.msRequestFullscreen) {
+                videoEl.msRequestFullscreen();
+            }
         }
 
         function toggleLiveTargetSelection() {
@@ -887,14 +886,8 @@
             refreshPortalData();
         }
 
-        // ميزة الطرد المباشر للطالب من قائمة المتواجدين (تحول حالة كوده إلى banned)
         function banStudentByPhone(studentPhone) {
             let codes = JSON.parse(localStorage.getItem('yahiya_codes'));
-            codes = codes.map(c => {
-                // إذا كان الكود مستخدم من هذا الطالب أو نبحث عبر الأونلاين
-                return c;
-            });
-            // البحث عن الطالب في الأونلاين لمعرفة الكود المستخدم أو طرد هاتفه وكوده
             let onlineUsers = JSON.parse(localStorage.getItem('yahiya_online'));
             const targetUser = onlineUsers.find(u => u.phone === studentPhone);
             if (targetUser) {
@@ -934,13 +927,11 @@
             renderChatMessages();
         }
 
-        // عند الضغط على اسم شخص داخل الرسائل لفتح محادثة خاصة معه فوراً
         function openPrivateChatBySender(phone, name, role) {
             activeChatTarget = phone;
             const titleEl = document.getElementById('current-chat-title');
             titleEl.innerText = `محادثة خاصة مع: ${name}`;
 
-            // إضافة تبويب سريع أعلى الشات للمحادثة الخاصة إذا لم يكن موجوداً
             const sidebar = document.querySelector('.chat-sidebar-whatsapp');
             if (!document.getElementById(`pill-${phone}`)) {
                 sidebar.innerHTML += `<div class="chat-contact-pill active" id="pill-${phone}" onclick="switchChatTarget('${phone}', this)">${name}</div>`;
@@ -1052,11 +1043,12 @@
                         tFeed.innerHTML += `
                             <div class="video-card">
                                 <div class="video-container">
-                                    <video controls src="${item.url}"></video>
+                                    <video id="vid-${item.id}" controls src="${item.url}" playsinline></video>
                                 </div>
                                 <div class="video-info">
                                     <h3>${item.title}</h3>
                                     <p>${item.desc || ''}</p>
+                                    <button class="fullscreen-btn" onclick="toggleFullscreen('vid-${item.id}')">⛶ تكبير الشاشة</button>
                                     <button class="delete-btn" onclick="deleteContent(${item.id})">حذف الفيديو</button>
                                 </div>
                             </div>
@@ -1116,11 +1108,12 @@
                         sFeed.innerHTML += `
                             <div class="video-card">
                                 <div class="video-container">
-                                    <video controls src="${item.url}"></video>
+                                    <video id="vid-${item.id}" controls src="${item.url}" playsinline></video>
                                 </div>
                                 <div class="video-info">
                                     <h3>${item.title}</h3>
                                     <p>${item.desc || ''}</p>
+                                    <button class="fullscreen-btn" onclick="toggleFullscreen('vid-${item.id}')">⛶ تكبير الشاشة</button>
                                 </div>
                             </div>
                         `;
@@ -1172,23 +1165,19 @@
             }
             renderChatMessages();
         }
-    // إعدادات الفايربيز الخاصة بمشروعك
-const firebaseConfig = {
-  apiKey: "AIzaSyAeyXXbVMg1l5GF9sQ7eNVOOH5rqIAeM5A",
-  authDomain: "yahya-al-banna----math2026.firebaseapp.com",
-  projectId: "yahya-al-banna----math2026",
-  storageBucket: "yahya-al-banna----math2026.firebasestorage.app",
-  messagingSenderId: "100901042085",
-  appId: "1:100901042085:web:e1de66ff6b40e7d7585a4c",
-  measurementId: "G-JTHCEY45SX"
-};
 
-// تشغيل الفايربيز
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const database = firebase.database();
-
+        const firebaseConfig = {
+            apiKey: "AIzaSyAeyXXbVMg1l5GF9sQ7eNVOOH5rqIAeM5A",
+            authDomain: "yahya-al-banna----math2026.firebaseapp.com",
+            projectId: "yahya-al-banna----math2026",
+            storageBucket: "yahya-al-banna----math2026.firebasestorage.app",
+            messagingSenderId: "100901042085",
+            appId: "1:100901042085:web:e1de66ff6b40e7d7585a4c",
+            measurementId: "G-JTHCEY45SX"
+        };
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
     </script>
 </body>
 </html>
